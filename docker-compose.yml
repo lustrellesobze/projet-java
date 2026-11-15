@@ -1,0 +1,59 @@
+# Lance toute la plateforme en local : docker compose up --build
+# Interface : http://localhost:3000   API : http://localhost:8080/swagger-ui.html
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mboagouvia
+      POSTGRES_USER: mboa
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-mboa}
+    ports:
+      - "5432:5432"
+    volumes:
+      - donnees-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mboa -d mboagouvia"]
+      interval: 5s
+      retries: 10
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: mboa-mcp-server/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/mboagouvia
+      DB_USER: mboa
+      DB_PASSWORD: ${DB_PASSWORD:-mboa}
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: mboa-orchestrator/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/mboagouvia
+      DB_USER: mboa
+      DB_PASSWORD: ${DB_PASSWORD:-mboa}
+      MCP_SERVER_URL: http://mcp-server:8081
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mcp-server
+    restart: on-failure   # réessaie tant que le serveur MCP n'est pas encore prêt
+
+  web:
+    build: ./mboa-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - orchestrator
+
+volumes:
+  donnees-postgres:

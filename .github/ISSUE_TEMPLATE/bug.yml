@@ -1,0 +1,27 @@
+name: Anomalie
+description: Quelque chose ne fonctionne pas comme prévu
+title: "[Bug] "
+labels: ["type: bug"]
+body:
+  - type: textarea
+    id: constat
+    attributes:
+      label: Ce qui se passe
+    validations:
+      required: true
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Ce qui était attendu
+    validations:
+      required: true
+  - type: textarea
+    id: reproduire
+    attributes:
+      label: Étapes pour reproduire
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true

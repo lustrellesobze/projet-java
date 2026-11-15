@@ -1,0 +1,76 @@
+# Déploiement continu : quand le code arrive sur main ET que la CI est verte,
+# on publie les images Docker sur GitHub Container Registry (ghcr.io),
+# puis on déclenche le redéploiement sur Render.
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publier:
+    name: Publier les images
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - service: mboa-mcp-server
+            dockerfile: mboa-mcp-server/Dockerfile
+            context: .
+          - service: mboa-orchestrator
+            dockerfile: mboa-orchestrator/Dockerfile
+            context: .
+          - service: mboa-web
+            dockerfile: mboa-web/Dockerfile
+            context: mboa-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Se connecter à ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculer le nom de l'image (en minuscules)
+        id: nom
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ matrix.service }}" >> "$GITHUB_OUTPUT"
+
+      - name: Construire et publier
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ steps.nom.outputs.image }}:latest
+            ${{ steps.nom.outputs.image }}:${{ github.sha }}
+
+  deployer:
+    name: Déployer sur Render
+    needs: publier
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Déclencher les redéploiements
+        env:
+          HOOK_MCP: ${{ secrets.RENDER_DEPLOY_HOOK_MCP }}
+          HOOK_ORCH: ${{ secrets.RENDER_DEPLOY_HOOK_ORCHESTRATOR }}
+          HOOK_WEB: ${{ secrets.RENDER_DEPLOY_HOOK_WEB }}
+        run: |
+          for hook in "$HOOK_MCP" "$HOOK_ORCH" "$HOOK_WEB"; do
+            if [ -n "$hook" ]; then
+              curl -fsS -X POST "$hook" > /dev/null && echo "Redéploiement demandé."
+            else
+              echo "Secret de déploiement absent : étape ignorée (à configurer dans Settings > Secrets)."
+            fi
+          done

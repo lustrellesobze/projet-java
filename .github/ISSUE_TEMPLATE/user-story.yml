@@ -1,0 +1,42 @@
+name: Récit utilisateur
+description: Une fonctionnalité vue par l'usager (liée à un cas d'utilisation)
+title: "[CU-xx] "
+labels: ["type: fonctionnalité"]
+body:
+  - type: input
+    id: cu
+    attributes:
+      label: Cas d'utilisation
+      placeholder: CU-08 Calculer les cotisations CNPS
+    validations:
+      required: true
+  - type: textarea
+    id: recit
+    attributes:
+      label: Récit
+      value: |
+        En tant que …
+        je veux …
+        afin de …
+    validations:
+      required: true
+  - type: textarea
+    id: criteres
+    attributes:
+      label: Critères d'acceptation
+      value: |
+        - [ ] Étant donné … quand … alors …
+        - [ ]
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options:
+        - mboa-mcp-server
+        - mboa-orchestrator
+        - mboa-web
+        - pipeline / infrastructure
+    validations:
+      required: true

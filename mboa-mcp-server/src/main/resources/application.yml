@@ -1,0 +1,34 @@
+server:
+  port: ${PORT:8081}
+
+spring:
+  application:
+    name: mboa-mcp-server
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/mboagouvia}
+    username: ${DB_USER:mboa}
+    password: ${DB_PASSWORD:mboa}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none          # le schéma est géré uniquement par Flyway
+  flyway:
+    enabled: true             # ce module est le SEUL propriétaire des migrations
+    locations: classpath:db/migration
+  ai:
+    mcp:
+      server:
+        name: mboa-gouvia-mcp
+        version: 0.1.0
+        type: SYNC
+        protocol: STREAMABLE  # point d'accès : http://localhost:8081/mcp
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true

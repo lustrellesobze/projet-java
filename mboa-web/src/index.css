@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* Couleurs de la maquette, en variables : le mode sombre change seulement leurs valeurs. */
+:root {
+  --fond: #f6f7f4;
+  --surface: #ffffff;
+  --bord: #e3e6e1;
+  --texte: #14201a;
+  --texte-doux: #56635b;
+  --vert: #1f7a4d;
+  --vert-fonce: #18603c;
+  --vert-clair: #e3f1e9;
+  --or: #c9a227;
+  --or-clair: #fbf3d5;
+  --or-texte: #6b5410;
+  --rouge-clair: #fdecec;
+  --rouge-texte: #9b1c1c;
+}
+
+.sombre {
+  --fond: #0e1411;
+  --surface: #161f1a;
+  --bord: #2a3530;
+  --texte: #e6ece8;
+  --texte-doux: #9aa9a0;
+  --vert: #2f9e67;
+  --vert-fonce: #25844f;
+  --vert-clair: #1c3227;
+  --or: #d9b43c;
+  --or-clair: #3a3118;
+  --or-texte: #ecd58a;
+  --rouge-clair: #3a1d1d;
+  --rouge-texte: #f3b4b4;
+}
+
+@theme inline {
+  --color-fond: var(--fond);
+  --color-surface: var(--surface);
+  --color-bord: var(--bord);
+  --color-texte: var(--texte);
+  --color-texte-doux: var(--texte-doux);
+  --color-vert: var(--vert);
+  --color-vert-fonce: var(--vert-fonce);
+  --color-vert-clair: var(--vert-clair);
+  --color-or: var(--or);
+  --color-or-clair: var(--or-clair);
+  --color-or-texte: var(--or-texte);
+  --color-rouge-clair: var(--rouge-clair);
+  --color-rouge-texte: var(--rouge-texte);
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--fond);
+  color: var(--texte);
+}
