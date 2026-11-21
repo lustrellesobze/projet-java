@@ -1,5 +1,5 @@
 # Lance toute la plateforme en local : docker compose up --build
-# Interface : http://localhost:3000   API : http://localhost:8080/swagger-ui.html
+# Interface : http://localhost:3000   API : http://localhost:8090/swagger-ui.html
 services:
   postgres:
     image: postgres:16-alpine
@@ -43,7 +43,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       CORS_ORIGINS: http://localhost:3000,http://localhost:5173
     ports:
-      - "8080:8080"
+      - "8090:8080"
     depends_on:
       - mcp-server
     restart: on-failure   # réessaie tant que le serveur MCP n'est pas encore prêt
