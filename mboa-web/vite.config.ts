@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     port: 5173,
     // En développement, /api est redirigé vers l'orchestrateur Spring Boot
-    proxy: { '/api': 'http://localhost:8080' },
+    proxy: { '/api': 'http://localhost:8090' },
   },
   test: {
     environment: 'node',

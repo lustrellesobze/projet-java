@@ -13,5 +13,6 @@ WORKDIR /app
 RUN useradd --system --uid 1001 mboa
 COPY --from=build /app/mboa-orchestrator/target/mboa-orchestrator-*.jar app.jar
 USER mboa
+ENV PORT=8080
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

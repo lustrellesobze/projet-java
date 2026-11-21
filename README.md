@@ -79,7 +79,7 @@ Interface React ──HTTPS + JWT──► Orchestrateur (Spring Boot + Spring A
 | --- | --- | --- |
 | `mboa-common` | Objets partagés (DTO, exceptions) | aucun |
 | `mboa-mcp-server` | Outils MCP, règles métier, référentiel, migrations Flyway | 8081 |
-| `mboa-orchestrator` | API REST, sécurité, comptes, conversations, quotas, dialogue avec l'IA | 8080 |
+| `mboa-orchestrator` | API REST, sécurité, comptes, conversations, quotas, dialogue avec l'IA | 8090 |
 | `mboa-web` | Interface React | 5173 (dev) / 3000 (Docker) |
 
 Pourquoi deux applications Java ? Voir [docs/adr/0001](docs/adr/0001-separer-orchestrateur-et-serveur-mcp.md).
@@ -204,7 +204,7 @@ npm run dev
 ```powershell
 Copy-Item .env.example .env      # puis remplir ANTHROPIC_API_KEY et JWT_SECRET
 docker compose up --build
-# Interface : http://localhost:3000    API : http://localhost:8080/swagger-ui.html
+# Interface : http://localhost:3000    API : http://localhost:8090/swagger-ui.html
 ```
 
 ## Tests et qualité
@@ -220,7 +220,7 @@ Rapport de couverture : `mboa-mcp-server/target/site/jacoco/index.html` (idem po
 
 ## API REST
 
-Documentation interactive complète : `http://localhost:8080/swagger-ui.html` (générée par springdoc).
+Documentation interactive complète : `http://localhost:8090/swagger-ui.html` (générée par springdoc).
 
 | Méthode | Chemin | Accès | Rôle |
 | --- | --- | --- | --- |
