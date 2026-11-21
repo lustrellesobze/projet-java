@@ -30,7 +30,7 @@ param(
 $OutputEncoding = [System.Text.Encoding]::UTF8
 $Proprietaire = $Depot.Split("/")[0]
 $NomDepot = $Depot.Split("/")[1]
-$Titre = "Mboa Gouvia - Kanban"
+$TitreTableau = "Mboa Gouvia - Kanban"
 $Comptes = @{ L = $Lustrelle; M = $Menard; D = $Didier }
 
 function Verifier([string]$Etape) {
@@ -91,11 +91,11 @@ $sprints = [ordered]@{
     $S5 = @{ fin = "2027-01-10T23:59:59Z"; d = "Déploiement Kubernetes et version mobile" }
 }
 $existants = @(gh api "repos/$Depot/milestones?state=all&per_page=100" --jq ".[].title")
-foreach ($titre in $sprints.Keys) {
-    if ($existants -notcontains $titre) {
-        gh api "repos/$Depot/milestones" -f title="$titre" -f due_on="$($sprints[$titre].fin)" -f description="$($sprints[$titre].d)" --silent
-        Verifier "création du sprint $titre"
-        Write-Host "  + $titre"
+foreach ($nomSprint in $sprints.Keys) {
+    if ($existants -notcontains $nomSprint) {
+        gh api "repos/$Depot/milestones" -f title="$nomSprint" -f due_on="$($sprints[$nomSprint].fin)" -f description="$($sprints[$nomSprint].d)" --silent
+        Verifier "création du sprint $nomSprint"
+        Write-Host "  + $nomSprint"
     }
 }
 
@@ -103,9 +103,9 @@ foreach ($titre in $sprints.Keys) {
 Write-Host "4/6 Tableau Kanban (GitHub Projects)..." -ForegroundColor Green
 $projets = gh project list --owner $Proprietaire --format json --limit 100 | ConvertFrom-Json
 Verifier "lecture des projets (lancez : gh auth refresh -s project)"
-$projet = $projets.projects | Where-Object { $_.title -eq $Titre } | Select-Object -First 1
+$projet = $projets.projects | Where-Object { $_.title -eq $TitreTableau } | Select-Object -First 1
 if (-not $projet) {
-    $projet = gh project create --owner $Proprietaire --title $Titre --format json | ConvertFrom-Json
+    $projet = gh project create --owner $Proprietaire --title $TitreTableau --format json | ConvertFrom-Json
     Verifier "création du tableau"
     gh project link $projet.number --owner $Proprietaire --repo $NomDepot | Out-Null
     Write-Host "  + Tableau créé"
