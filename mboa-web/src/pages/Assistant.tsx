@@ -49,7 +49,9 @@ export default function Assistant({ t, langue, connecte, statut, menuOuvert, onF
   const [elements, setElements] = useState<ElementFil[]>(filInitial.elements)
   const [outils, setOutils] = useState<OutilExecute[]>(() => outilsDuFil(filInitial.elements))
   const [enCours, setEnCours] = useState(false)
-  const [surligne, setSurligne] = useState(false)
+  // Outils de la réponse choisie par « voir le détail », encadrés dans le panneau de droite.
+  const [selection, setSelection] = useState<OutilExecute[]>([])
+  const [panneauOuvert, setPanneauOuvert] = useState(false)
   const finDuFil = useRef<HTMLDivElement>(null)
 
   // Connexion : on charge l'historique. Déconnexion : on repart de zéro.
@@ -84,6 +86,7 @@ export default function Assistant({ t, langue, connecte, statut, menuOuvert, onF
     setConversationId(null)
     setElements([])
     setOutils([])
+    setSelection([])
     effacerFil()
     onFermerMenu()
   }
@@ -94,6 +97,7 @@ export default function Assistant({ t, langue, connecte, statut, menuOuvert, onF
       const messages = await lireConversation(id)
       setConversationId(id)
       setOutils([])
+      setSelection([])
       setElements(
         messages.map((m) =>
           m.role === 'USER'
@@ -121,6 +125,7 @@ export default function Assistant({ t, langue, connecte, statut, menuOuvert, onF
     // Le visiteur n'a rien en base : on renvoie les messages déjà affichés pour que l'IA garde le fil.
     const historique = connecte ? [] : historiquePourIa(elements)
     setElements((e) => [...e, { type: 'usager', texte: question }])
+    setSelection([])
     setEnCours(true)
     try {
       const reponse = await poserQuestion(question, langue, conversationId, historique)
@@ -139,9 +144,9 @@ export default function Assistant({ t, langue, connecte, statut, menuOuvert, onF
     }
   }
 
-  function voirOutils() {
-    setSurligne(true)
-    setTimeout(() => setSurligne(false), 1500)
+  function voirOutils(outilsReponse: OutilExecute[]) {
+    setSelection(outilsReponse)
+    setPanneauOuvert(true)
   }
 
   return (
@@ -196,7 +201,15 @@ export default function Assistant({ t, langue, connecte, statut, menuOuvert, onF
         <ZoneSaisie t={t} enCours={enCours} onEnvoyer={envoyer} />
       </main>
 
-      {elements.length > 0 && <PanneauOutils t={t} outils={outils} surligne={surligne} />}
+      {elements.length > 0 && (
+        <PanneauOutils
+          t={t}
+          outils={outils}
+          selection={selection}
+          ouvertMobile={panneauOuvert}
+          onFermer={() => setPanneauOuvert(false)}
+        />
+      )}
     </div>
   )
 }

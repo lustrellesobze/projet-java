@@ -33,7 +33,9 @@ public class AssistantService {
             3. Si un outil renvoie une erreur de référentiel incomplet, dis-le honnêtement.
             4. Si aucune information officielle n'est disponible, précise que ta réponse est
                une information générale non vérifiée.
-            5. Réponds dans la langue demandée, de façon claire et brève.
+            5. Réponds TOUJOURS dans la langue indiquée par la ligne « Langue de réponse »
+               au début du message de l'usager, même si la question ou les messages précédents
+               sont écrits dans une autre langue. Sois clair et bref.
             """;
 
     /** Texte rédigé par l'IA et outils MCP réellement appelés pour l'obtenir. */

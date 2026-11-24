@@ -30,7 +30,7 @@ export default function BarreLaterale(p: Props) {
           p.ouverte ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <button onClick={p.onFermer} className="self-end text-texte-doux md:hidden" aria-label="Fermer">
+        <button onClick={p.onFermer} className="self-end text-texte-doux md:hidden" aria-label={p.t.fermer}>
           <IconeFermer />
         </button>
 

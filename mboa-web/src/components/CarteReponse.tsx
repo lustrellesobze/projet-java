@@ -2,13 +2,15 @@ import type { OutilExecute } from '../api/client'
 import type { Textes } from '../i18n'
 import { premierOutilReussi } from '../utils/outils'
 import { IconeCle, IconeCoche, IconePouceBas, IconePouceHaut, IconeTelecharger } from './Icones'
+import TexteMarkdown from './TexteMarkdown'
 
 interface Props {
   t: Textes
   texte: string
   /** null pour une réponse relue depuis l'historique (outils non conservés). */
   outils: OutilExecute[] | null
-  onVoirOutils: () => void
+  /** Montre, dans le panneau « Outils exécutés », les outils de cette réponse. */
+  onVoirOutils: (outils: OutilExecute[]) => void
 }
 
 /** Réponse de l'assistant : texte, badge de vérification, outils utilisés, actions. */
@@ -17,7 +19,7 @@ export default function CarteReponse({ t, texte, outils, onVoirOutils }: Props) 
 
   return (
     <article className="max-w-3xl self-start rounded-2xl border border-bord bg-surface p-5 shadow-sm">
-      <p className="whitespace-pre-wrap leading-relaxed">{texte}</p>
+      <TexteMarkdown texte={texte} />
 
       {outils !== null && (
         <div className="mt-4 flex flex-wrap gap-2 text-sm">
@@ -35,7 +37,7 @@ export default function CarteReponse({ t, texte, outils, onVoirOutils }: Props) 
 
       {outils !== null && outils.length > 0 && (
         <button
-          onClick={onVoirOutils}
+          onClick={() => onVoirOutils(outils)}
           className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-vert hover:underline"
         >
           <IconeCle /> {t.outilsUtilises(outils.length)}
